@@ -21,7 +21,6 @@ def ensure_state():
         "page": "Hoje",
         "current_card": None,
         "checked": False,
-        "ans_input": "",
         "goal": 20,
         "_last_correct": False,
         "_last_missing": [],
@@ -162,8 +161,6 @@ def page_review():
     "Sua resposta (se houver mais de uma lacuna, separe por vírgula):",
     key=input_key
 )
-
-st.session_state["last_answer"] = user_answer
    
     c1, c2 = st.columns([1, 1])
     with c1:
