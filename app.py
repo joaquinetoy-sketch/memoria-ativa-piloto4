@@ -156,15 +156,17 @@ def page_review():
     st.markdown(f"**Venceu em:** {datetime.fromisoformat(card['due_date']).strftime('%d/%m/%Y %H:%M')}")
     st.write(card["prompt"])
 
-    st.session_state.ans_input = st.text_input(
-        "Sua resposta (se houver mais de uma lacuna, separe por vírgula):",
-        key="ans_input"
-    )
+   input_key = f"ans_input_{card['id']}"
+
+user_answer = st.text_input(
+    "Sua resposta (se houver mais de uma lacuna, separe por vírgula):",
+    key=input_key
+)
 
     c1, c2 = st.columns([1,1])
     with c1:
         if st.button("Conferir", type="primary"):
-            correct, missing = check_answer(answers, variants_map, st.session_state.ans_input)
+            correct, missing = check_answer(answers, variants_map, user_answer)
             st.session_state.checked = True
             st.session_state._last_correct = correct
             st.session_state._last_missing = missing
@@ -181,7 +183,7 @@ def page_review():
             db.update_schedule(card["id"], new_state.due_date.isoformat(), new_state.interval_days, new_state.ease, new_state.reps, new_state.lapses)
             st.session_state.current_card = None
             st.session_state.checked = False
-            st.session_state.ans_input = ""
+            st.session_state.pop(input_key, None)
             st.rerun()
 
     if st.session_state.checked:
@@ -215,15 +217,14 @@ def page_review():
                 lapses=int(card["lapses"]),
             )
             new_state = sr_update(state, rating)
-            db.add_review(card["id"], rating, correct, st.session_state.ans_input)
+            db.add_review(card["id"], rating, correct, user_answer)
             db.update_schedule(card["id"], new_state.due_date.isoformat(), new_state.interval_days, new_state.ease, new_state.reps, new_state.lapses)
 
             st.session_state.checked = False
-            st.session_state.ans_input = ""
+            st.session_state.pop(input_key, None)
             new_due = db.get_due_cards(st.session_state.user["id"], limit=limit)
             st.session_state.current_card = new_due[0]["id"] if new_due else None
             st.rerun()
-
         with r1:
             if st.button("De novo", use_container_width=True):
                 apply_rating("again")
