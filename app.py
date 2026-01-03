@@ -154,8 +154,8 @@ def page_review():
     st.markdown(f"**Deck:** {card['deck_name']}")
     st.markdown(f"**Venceu em:** {datetime.fromisoformat(card['due_date']).strftime('%d/%m/%Y %H:%M')}")
     st.write(card["prompt"])
-
-   input_key = f"ans_input_{card['id']}"
+    
+    input_key = f"ans_input_{card['id']}"
 
     user_answer = st.text_input(
     "Sua resposta (se houver mais de uma lacuna, separe por vírgula):",
