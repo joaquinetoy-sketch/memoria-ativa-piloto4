@@ -158,12 +158,14 @@ def page_review():
 
    input_key = f"ans_input_{card['id']}"
 
-user_answer = st.text_input(
+    user_answer = st.text_input(
     "Sua resposta (se houver mais de uma lacuna, separe por vírgula):",
     key=input_key
 )
 
-    c1, c2 = st.columns([1,1])
+st.session_state["last_answer"] = user_answer
+   
+    c1, c2 = st.columns([1, 1])
     with c1:
         if st.button("Conferir", type="primary"):
             correct, missing = check_answer(answers, variants_map, user_answer)
